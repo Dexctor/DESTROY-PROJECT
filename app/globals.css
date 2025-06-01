@@ -1,26 +1,427 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Import de la nouvelle police Death Mohawk */
+@font-face {
+  font-family: 'Death Mohawk';
+  src: url('/fonts/DeathMohawkPersonalUseRegular-8MlEM.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Import de la police custom DESTROY - À remplacer par une police plus lisible */
+@font-face {
+  font-family: 'ElFont Destroy';
+  src: url('/fonts/el-font-destroy.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
+/* Import des fonts alternatives - style metal/underground mais lisibles */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+/* Nouvelles options plus lisibles mais toujours agressives */
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 255 255 255; /* Blanc pur */
+    --foreground: 0 0 0; /* Noir pur */
+    
+    /* Variables DESTROY */
+    --destroy-black: 0 0 0;
+    --destroy-white: 255 255 255;
+    --destroy-gray-200: 229 229 229;
+    --destroy-gray-400: 163 163 163;
+    --destroy-gray-600: 82 82 82;
+    --destroy-gray-800: 38 38 38;
+  }
+
+  /* Reset et base */
+  * {
+    @apply border-destroy-gray-200;
+  }
+
+  html {
+    @apply scroll-smooth;
+    /* Empêche le zoom sur iOS lors du focus des inputs */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white text-black font-sans antialiased;
+    font-feature-settings: "kern" 1;
+    letter-spacing: 0.01em;
+    /* Améliore le scroll sur mobile */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Typographie de base - optimisée pour mobile */
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight uppercase;
+    /* Utilisation de Teko ou Oswald en poids léger pour les titres */
+    font-family: 'Teko', 'Oswald', 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+  }
+
+  h1 {
+    @apply text-5xl md:text-5xl lg:text-6xl;
+    letter-spacing: 0.02em;
+    font-weight: 300;
+    line-height: 0.95;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  h3 {
+    @apply text-2xl md:text-2xl lg:text-3xl;
+    letter-spacing: 0.01em;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+
+  p {
+    @apply text-base md:text-base lg:text-lg leading-relaxed;
+    font-family: 'Barlow Condensed', 'Oswald', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    /* Meilleure lisibilité sur mobile */
+    line-height: 1.6;
+  }
+
+  /* Focus states accessibles */
+  *:focus {
+    @apply outline-none;
+  }
+
+  *:focus-visible {
+    @apply ring-2 ring-destroy-black ring-offset-2 ring-offset-white;
+  }
+
+  /* Amélioration des zones de tap sur mobile */
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Classes utilitaires réutilisables - optimisées mobile */
+  .section-padding {
+    @apply px-4 sm:px-6 md:px-8 lg:px-16 xl:px-24;
+  }
+
+  .section-spacing {
+    @apply py-12 sm:py-16 md:py-24 lg:py-32;
+  }
+
+  .container-destroy {
+    @apply max-w-screen-2xl mx-auto;
+  }
+
+  /* Boutons optimisés pour mobile (min 44px de hauteur) */
+  .btn-base {
+    @apply inline-flex items-center justify-center px-6 py-4 
+           font-medium transition-all duration-200 uppercase tracking-wider
+           focus:outline-none focus-visible:ring-2 
+           focus-visible:ring-destroy-black focus-visible:ring-offset-2
+           border font-medium
+           /* Taille minimale pour les doigts */
+           min-h-[44px] min-w-[44px];
+    font-family: 'Barlow Condensed', 'Oswald', sans-serif;
+    font-weight: 500;
+    /* Améliore le tap sur mobile */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn-primary {
+    @apply btn-base bg-destroy-black text-destroy-white 
+           border-destroy-black
+           hover:bg-destroy-white hover:text-destroy-black
+           active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply btn-base bg-transparent text-destroy-black 
+           border-destroy-black 
+           hover:bg-destroy-black hover:text-destroy-white
+           active:scale-95;
+  }
+
+  /* Titres de section optimisés mobile */
+  .section-title {
+    @apply text-3xl sm:text-4xl md:text-4xl lg:text-5xl 
+           tracking-tight mb-4 sm:mb-6 md:mb-8 uppercase;
+    font-family: 'Teko', 'Oswald', 'Bebas Neue', sans-serif;
+    letter-spacing: 0.03em;
+    font-weight: 400;
+    line-height: 0.95;
+  }
+
+  /* Titre principal DESTROY - version mobile first */
+  .destroy-title {
+    font-family: 'Death Mohawk', 'Teko', 'Anton', sans-serif;
+    letter-spacing: 0.04em;
+    font-weight: normal;
+    /* Réduction de la taille pour Death Mohawk */
+    font-size: 85%;
+  }
+
+  /* Alternative avec Teko très fin */
+  .destroy-title-thin {
+    font-family: 'Teko', 'Oswald', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Effet glitch pour les titres */
+  .glitch {
+    position: relative;
+    color: black;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .glitch::before {
+    animation: glitch-anim-1 0.5s infinite linear alternate-reverse;
+    color: black;
+    z-index: -1;
+    opacity: 0.8;
+  }
+
+  .glitch::after {
+    animation: glitch-anim-2 0.5s infinite linear alternate-reverse;
+    color: black;
+    z-index: -2;
+    opacity: 0.8;
+  }
+
+  /* Grille masonry optimisée mobile */
+  .masonry-grid {
+    @apply columns-1 sm:columns-2 md:columns-2 lg:columns-3 xl:columns-4 
+           gap-3 sm:gap-4 md:gap-6;
+  }
+
+  .masonry-item {
+    @apply break-inside-avoid mb-3 sm:mb-4 md:mb-6;
+  }
+
+  /* Effets hover pour images - désactivés sur mobile */
+  .image-hover {
+    @apply overflow-hidden cursor-pointer relative;
+    filter: contrast(1.1);
+  }
+
+  .image-hover img {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Hover uniquement sur desktop */
+  @media (hover: hover) {
+    .image-hover:hover img {
+      @apply scale-105;
+      filter: contrast(1.3) grayscale(0.5);
+    }
+  }
+
+  /* Style barré pour texte */
+  .strike-through {
+    position: relative;
+    display: inline-block;
+  }
+
+  .strike-through::after {
+    content: '';
+    position: absolute;
+    left: -5%;
+    right: -5%;
+    top: 50%;
+    height: 2px;
+    background: black;
+    transform: rotate(-2deg);
+  }
+
+  /* Animations personnalisées */
+  .animate-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  /* Effet de texte décalé */
+  .text-offset {
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style ligne brutale mais plus fine */
+  .brutal-line {
+    @apply border-t-2 border-black;
+  }
+
+  /* Espacement mobile pour les listes */
+  .mobile-spacing > * + * {
+    @apply mt-4 sm:mt-6 md:mt-8;
+  }
+
+  /* Zone de tap élargie pour mobile */
+  .tap-target {
+    @apply relative;
+  }
+
+  .tap-target::before {
+    content: '';
+    @apply absolute -inset-2;
+  }
+}
+
+@layer utilities {
+  /* Utilities personnalisées DESTROY */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Backdrop filters */
+  .backdrop-blur-destroy {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Rotation aléatoire pour effet DIY - réduite sur mobile */
+  .rotate-random-sm {
+    @apply md:transform md:rotate-[-1deg];
+  }
+
+  .rotate-random-sm-reverse {
+    @apply md:transform md:rotate-[1deg];
+  }
+
+  .rotate-random {
+    @apply md:transform md:rotate-[-2deg];
+  }
+
+  .rotate-random-reverse {
+    @apply md:transform md:rotate-[2deg];
+  }
+
+  /* Safe area pour iPhone */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Animations globales */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animations glitch */
+@keyframes glitch-anim-1 {
+  0% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-2px);
+  }
+  40% {
+    transform: translateX(2px);
+  }
+  60% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  20% {
+    transform: translateX(2px) translateY(2px);
+  }
+  40% {
+    transform: translateX(-2px) translateY(-2px);
+  }
+  60% {
+    transform: translateX(1px) translateY(1px);
+  }
+  80% {
+    transform: translateX(-1px) translateY(-1px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
 }
