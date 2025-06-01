@@ -4,48 +4,61 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
+import { useState, useEffect } from "react";
 
-// Données mockup pour la galerie - style plus underground
+// Données mockup pour la galerie - avec placeholders base64
 const mockArtworks = [
   {
     id: 1,
     title: "MECHANICAL SOUL",
     category: "TATTOO",
-    image: "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?w=400&h=600&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-tattoo-1.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
   {
     id: 2,
     title: "INDUSTRIAL THREAD",
     category: "COUTURE",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-couture-1.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
   {
     id: 3,
     title: "URBAN DECAY",
     category: "INSTALLATION",
-    image: "https://images.unsplash.com/photo-1561059488-916d69792237?w=400&h=700&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-installation-1.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
   {
     id: 4,
     title: "SKIN POETRY",
     category: "TATTOO",
-    image: "https://images.unsplash.com/photo-1598371611234-b9e5b9a0e8e5?w=400&h=550&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-tattoo-2.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
   {
     id: 5,
     title: "DECONSTRUCTED",
     category: "COUTURE",
-    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=450&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-couture-2.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
   {
     id: 6,
     title: "RAW EXPRESSION",
     category: "TATTOO",
-    image: "https://images.unsplash.com/photo-1567701554261-fcc4efeb4e13?w=400&h=600&fit=crop&q=80&fm=jpg&crop=entropy&cs=tinysrgb",
+    image: "/images/placeholder-tattoo-3.svg",
+    blurDataURL: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q==",
   },
 ];
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <main className="min-h-screen bg-white">
       {/* Utilisation du composant Header */}
@@ -62,56 +75,58 @@ export default function Home() {
         </div>
 
         <div className="container-destroy section-padding text-center relative z-10 py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            {/* Titre principal avec effet glitch */}
-            <motion.h1 
-              className="text-6xl sm:text-7xl md:text-7xl lg:text-8xl font-light mb-6 glitch destroy-title-thin"
-              data-text="DESTROY"
-              initial={{ letterSpacing: "0.15em" }}
-              animate={{ letterSpacing: "0.08em" }}
-              transition={{ duration: 1, delay: 0.3 }}
-            >
-              DESTROY
-            </motion.h1>
-            
-            {/* Sous-titre style DIY */}
-            <motion.div 
-              className="mb-12"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <p className="text-lg sm:text-xl md:text-xl lg:text-2xl font-light tracking-widest mb-3">
-                <span className="strike-through">CRÉATEUR</span> ALTERNATIF
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-base sm:text-lg uppercase tracking-wider font-light">
-                <span>TATTOO</span>
-                <span className="text-destroy-gray-400">✦</span>
-                <span>COUTURE</span>
-                <span className="text-destroy-gray-400">✦</span>
-                <span>ART</span>
-              </div>
-            </motion.div>
-            
-            {/* Boutons style brutal - optimisés mobile */}
+          {mounted && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center max-w-md mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <Button variant="primary" size="lg" className="w-full sm:w-auto rotate-random-sm">
-                VOIR LES ŒUVRES
-              </Button>
-              <Button variant="secondary" size="lg" className="w-full sm:w-auto rotate-random-sm-reverse">
-                MANIFESTE
-              </Button>
+              {/* Titre principal avec effet glitch */}
+              <motion.h1 
+                className="text-6xl sm:text-7xl md:text-7xl lg:text-8xl font-light mb-6 glitch destroy-title-thin"
+                data-text="DESTROY"
+                initial={{ letterSpacing: "0.15em" }}
+                animate={{ letterSpacing: "0.08em" }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+                DESTROY
+              </motion.h1>
+              
+              {/* Sous-titre style DIY */}
+              <motion.div 
+                className="mb-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <p className="text-lg sm:text-xl md:text-xl lg:text-2xl font-light tracking-widest mb-3">
+                  <span className="strike-through">CRÉATEUR</span> ALTERNATIF
+                </p>
+                <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-base sm:text-lg uppercase tracking-wider font-light">
+                  <span>TATTOO</span>
+                  <span className="text-destroy-gray-400">✦</span>
+                  <span>COUTURE</span>
+                  <span className="text-destroy-gray-400">✦</span>
+                  <span>ART</span>
+                </div>
+              </motion.div>
+              
+              {/* Boutons style brutal - optimisés mobile */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center max-w-md mx-auto"
+              >
+                <Button variant="primary" size="lg" className="w-full sm:w-auto rotate-random-sm">
+                  VOIR LES ŒUVRES
+                </Button>
+                <Button variant="secondary" size="lg" className="w-full sm:w-auto rotate-random-sm-reverse">
+                  MANIFESTE
+                </Button>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          )}
 
           {/* Citation style punk - visible sur mobile */}
           <motion.div
@@ -213,25 +228,25 @@ export default function Home() {
           >
             <h2 className="text-5xl sm:text-6xl md:text-7xl font-light mb-6 md:mb-8">ŒUVRES</h2>
             
-            {/* Filtres style brutal - scroll horizontal sur mobile */}
-            <div className="flex gap-4 sm:gap-8 justify-start sm:justify-center overflow-x-auto no-scrollbar pb-2">
-              <button className="text-base sm:text-xl uppercase tracking-wider border-b-2 sm:border-b-4 border-black pb-1 sm:pb-2 font-bold whitespace-nowrap flex-shrink-0">
+            {/* Filtres style brutal - centré sur desktop, scroll sur mobile */}
+            <div className="flex gap-4 sm:gap-6 md:gap-8 justify-center overflow-x-auto no-scrollbar pb-2 max-w-4xl mx-auto">
+              <button className="text-base sm:text-lg md:text-xl uppercase tracking-wider border-b-2 sm:border-b-4 border-black pb-1 sm:pb-2 font-bold whitespace-nowrap flex-shrink-0">
                 TOUT
               </button>
-              <button className="text-base sm:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
+              <button className="text-base sm:text-lg md:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
                 TATTOO
               </button>
-              <button className="text-base sm:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
+              <button className="text-base sm:text-lg md:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
                 COUTURE
               </button>
-              <button className="text-base sm:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
+              <button className="text-base sm:text-lg md:text-xl uppercase tracking-wider text-destroy-gray-400 hover:text-black transition-colors font-medium whitespace-nowrap flex-shrink-0">
                 INSTALLATION
               </button>
             </div>
           </motion.div>
 
-          {/* Grille Masonry - Style underground */}
-          <div className="masonry-grid">
+          {/* Grille responsive centrée */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
             {mockArtworks.map((artwork, index) => (
               <motion.div
                 key={artwork.id}
@@ -239,18 +254,21 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true, margin: "-50px" }}
-                className="masonry-item image-hover group"
+                className="w-full"
               >
-                <div className="relative bg-black">
+                <div className="relative bg-black group">
                   {/* Cadre brutal */}
                   <div className="border-2 border-black">
-                    <div className="aspect-[3/4] relative overflow-hidden">
+                    <div className="aspect-[3/4] relative overflow-hidden bg-gray-100">
                       <Image
                         src={artwork.image}
                         alt={artwork.title}
                         fill
                         className="object-cover transition-all duration-700"
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        placeholder="blur"
+                        blurDataURL={artwork.blurDataURL}
+                        loading={index < 3 ? "eager" : "lazy"}
                       />
                     </div>
                   </div>
